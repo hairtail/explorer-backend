@@ -49,6 +49,8 @@ func AccountDetails(c echo.Context) error {
 		response, total, err = cc.Service.GetAccountTransactions(context.TODO(), accountID, pageNum, pageSize)
 	case rewards:
 		response, total, err = cc.Service.GetAccountRewards(context.TODO(), accountID, pageNum, pageSize)
+	case smeshers:
+		response, total, err = cc.Service.GetAccountSmeshers(context.TODO(), accountID, pageNum, pageSize)
 	default:
 		return echo.NewHTTPError(http.StatusNotFound, "entity not found")
 	}

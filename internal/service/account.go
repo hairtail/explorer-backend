@@ -102,6 +102,16 @@ func (e *Service) GetAccountRewards(ctx context.Context, accountID string, page,
 	return e.getRewards(ctx, &bson.D{{Key: "coinbase", Value: addr.String()}}, opts)
 }
 
+func (e *Service) GetAccountSmeshers(ctx context.Context, accountID string, page, perPage int64) ([]*model.Smesher, int64, error) {
+	addr, err := address.StringToAddress(accountID)
+	if err != nil {
+		return nil, 0, ErrNotFound
+	}
+	opts := e.getFindOptions("coinbase", page, perPage)
+	opts.SetProjection(bson.D{})
+	return e.getSmeshers(ctx, &bson.D{{Key: "coinbase", Value: addr.String()}}, opts)
+}
+
 func (e *Service) getAccounts(ctx context.Context, filter *bson.D, options *options.FindOptions) (accs []*model.Account, total int64, err error) {
 	total, err = e.storage.CountAccounts(ctx, filter)
 	if err != nil {
