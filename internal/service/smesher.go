@@ -74,7 +74,7 @@ func (e *Service) getSmeshers(ctx context.Context, filter *bson.D, options *opti
 	if total == 0 {
 		return []*model.Smesher{}, 0, nil
 	}
-	smeshers, err = e.storage.GetSmeshers(ctx, &bson.D{{Key: "id", Value: bson.M{"$in": smeshersList}}})
+	smeshers, err = e.storage.GetSmeshers(ctx, &bson.D{{Key: "id", Value: bson.M{"$in": smeshersList}}}, options)
 	if err != nil {
 		return nil, 0, fmt.Errorf("error load smeshers: %w", err)
 	}
