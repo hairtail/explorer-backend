@@ -78,5 +78,6 @@ func (e *Service) getSmeshers(ctx context.Context, filter *bson.D, options *opti
 	if err != nil {
 		return nil, 0, fmt.Errorf("error load smeshers: %w", err)
 	}
+	total = int64(len(smeshers))
 	return smeshers, total, nil
 }
