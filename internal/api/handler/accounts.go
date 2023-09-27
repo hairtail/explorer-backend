@@ -37,6 +37,10 @@ func Account(c echo.Context) error {
 func AccountDetails(c echo.Context) error {
 	cc := c.(*ApiContext)
 	pageNum, pageSize := GetPagination(cc)
+	_, _, layer, stateErr := cc.Service.GetState(context.TODO())
+	if stateErr != nil {
+		return fmt.Errorf("failed to get current state info: %w", stateErr)
+	}
 	accountID := c.Param("id")
 	var (
 		response interface{}
@@ -50,7 +54,7 @@ func AccountDetails(c echo.Context) error {
 	case rewards:
 		response, total, err = cc.Service.GetAccountRewards(context.TODO(), accountID, pageNum, pageSize)
 	case smeshers:
-		response, total, err = cc.Service.GetAccountSmeshers(context.TODO(), accountID, pageNum, pageSize)
+		response, total, err = cc.Service.GetAccountActiveSmeshers(context.TODO(), accountID, pageNum, pageSize, layer)
 	default:
 		return echo.NewHTTPError(http.StatusNotFound, "entity not found")
 	}

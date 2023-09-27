@@ -35,6 +35,7 @@ type AccountService interface {
 	GetAccountTransactions(ctx context.Context, accountID string, page, perPage int64) ([]*Transaction, int64, error)
 	GetAccountRewards(ctx context.Context, accountID string, page, perPage int64) ([]*Reward, int64, error)
 	GetAccountSmeshers(ctx context.Context, accountID string, page, perPage int64) ([]*Smesher, int64, error)
+	GetAccountActiveSmeshers(ctx context.Context, accountID string, page, perPage int64, layer uint32) ([]*Smesher, int64, error)
 }
 
 func NewAccount(in *pb.Account) *Account {

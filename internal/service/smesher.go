@@ -56,6 +56,34 @@ func (e *Service) CountSmesherRewards(ctx context.Context, smesherID string) (to
 	return e.storage.CountSmesherRewards(ctx, smesherID)
 }
 
+func (e *Service) getActiveSmeshers(ctx context.Context, filter *bson.D, layer uint32, options *options.FindOptions) (smeshers []*model.Smesher, total int64, err error) {
+	atxs, err := e.storage.GetActivations(ctx, filter, options)
+	if err != nil {
+		return nil, 0, fmt.Errorf("error count smeshers: %w", err)
+	}
+
+	smeshersList := make([]string, 0, len(atxs))
+	var lastID string
+	for _, atx := range atxs {
+		if atx.Layer >= layer {
+			if lastID != atx.SmesherId {
+				smeshersList = append(smeshersList, atx.SmesherId)
+				lastID = atx.SmesherId
+			}
+		}
+	}
+	total = int64(len(smeshersList))
+	if total == 0 {
+		return []*model.Smesher{}, 0, nil
+	}
+	smeshers, err = e.storage.GetSmeshers(ctx, &bson.D{{Key: "id", Value: bson.M{"$in": smeshersList}}}, options)
+	if err != nil {
+		return nil, 0, fmt.Errorf("error load smeshers: %w", err)
+	}
+	total = int64(len(smeshers))
+	return smeshers, total, nil
+}
+
 func (e *Service) getSmeshers(ctx context.Context, filter *bson.D, options *options.FindOptions) (smeshers []*model.Smesher, total int64, err error) {
 	atxs, err := e.storage.GetActivations(ctx, filter, options)
 	if err != nil {
